@@ -80,6 +80,7 @@ export default class SignaturePad extends SignatureEventTarget {
   private _lastVelocity = 0;
   private _lastWidth = 0;
   private _strokeMoveUpdate: (event: SignatureEvent) => void;
+  private _strokePointerId : number | undefined;
   /* tslint:enable: variable-name */
 
   constructor(
@@ -382,6 +383,8 @@ export default class SignaturePad extends SignatureEventTarget {
       return;
     }
 
+    this._strokePointerId = event.pointerId;
+    
     event.preventDefault();
 
     this._strokeBegin(this._pointerEventToSignatureEvent(event));
@@ -397,6 +400,10 @@ export default class SignaturePad extends SignatureEventTarget {
       return;
     }
 
+    if (event.pointerId != this._strokePointerId) {
+      return;
+    }
+
     event.preventDefault();
     this._strokeMoveUpdate(this._pointerEventToSignatureEvent(event));
   };
@@ -405,6 +412,8 @@ export default class SignaturePad extends SignatureEventTarget {
     if (!event.isPrimary || this._isLeftButtonPressed(event)) {
       return;
     }
+
+    this._strokePointerId = undefined;
 
     event.preventDefault();
     this._strokeEnd(this._pointerEventToSignatureEvent(event));
