@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Jest does not support `PointerEvent` yet. Please see this GitHub issue
  * for context: https://github.com/jsdom/jsdom/pull/2666
@@ -34,5 +35,5 @@ if (!global.PointerEvent) {
       this.isPrimary = params.isPrimary;
     }
   }
-  global.PointerEvent = PointerEvent as unknown as typeof globalThis.PointerEvent;
+  global.PointerEvent = PointerEvent as any;
 }
