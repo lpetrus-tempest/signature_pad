@@ -14,6 +14,11 @@ import { BasicPoint, Point } from './point';
 import { SignatureEventTarget } from './signature_event_target';
 import { throttle } from './throttle';
 
+// PointerEvent with optional persistentDeviceId support
+export interface PersistentPointerEvent extends PointerEvent {
+  readonly persistentDeviceId?: unknown;
+}
+
 export { BasicPoint } from './point';
 
 export interface SignatureEvent {
@@ -80,7 +85,7 @@ export default class SignaturePad extends SignatureEventTarget {
   private _lastVelocity = 0;
   private _lastWidth = 0;
   private _strokeMoveUpdate: (event: SignatureEvent) => void;
-  private _strokePointerId : number | undefined;
+  private _strokeDeviceId: unknown;
   /* tslint:enable: variable-name */
 
   constructor(
@@ -284,6 +289,12 @@ export default class SignaturePad extends SignatureEventTarget {
 
     return (event.buttons & 1) === 1;
   }
+
+  private _getEventDeviceId(event: PointerEvent): unknown {
+    const persistentId = (event as PersistentPointerEvent).persistentDeviceId;
+    return persistentId ?? event.pointerId;
+  }
+
   private _pointerEventToSignatureEvent(
     event: MouseEvent | PointerEvent,
   ): SignatureEvent {
@@ -383,7 +394,7 @@ export default class SignaturePad extends SignatureEventTarget {
       return;
     }
 
-    this._strokePointerId = event.pointerId;
+    this._strokeDeviceId = this._getEventDeviceId(event);
     
     event.preventDefault();
 
@@ -400,7 +411,7 @@ export default class SignaturePad extends SignatureEventTarget {
       return;
     }
 
-    if (event.pointerId != this._strokePointerId) {
+    if (this._getEventDeviceId(event) != this._strokeDeviceId) {
       return;
     }
 
@@ -413,7 +424,11 @@ export default class SignaturePad extends SignatureEventTarget {
       return;
     }
 
-    this._strokePointerId = undefined;
+    if (this._getEventDeviceId(event) !== this._strokeDeviceId) {
+      return;
+    }
+
+    this._strokeDeviceId = undefined;
 
     event.preventDefault();
     this._strokeEnd(this._pointerEventToSignatureEvent(event));

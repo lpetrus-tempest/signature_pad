@@ -19,10 +19,12 @@ if (!global.PointerEvent) {
     public tiltY?: number;
     public twist?: number;
     public width?: number;
+    public persistentDeviceId?: unknown;
 
-    constructor(type: string, params: PointerEventInit = {}) {
+    constructor(type: string, params: PointerEventInit & { persistentDeviceId?: unknown } = {}) {
       super(type, params);
       this.pointerId = params.pointerId;
+      this.persistentDeviceId = (params as { persistentDeviceId?: unknown }).persistentDeviceId;
       this.width = params.width;
       this.height = params.height;
       this.pressure = params.pressure;
