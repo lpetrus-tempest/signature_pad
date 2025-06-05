@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Jest does not support `PointerEvent` yet. Please see this GitHub issue
  * for context: https://github.com/jsdom/jsdom/pull/2666
@@ -19,12 +18,12 @@ if (!global.PointerEvent) {
     public tiltY?: number;
     public twist?: number;
     public width?: number;
-    public persistentDeviceId?: any;
+    public persistentDeviceId?: unknown;
 
-    constructor(type: string, params: PointerEventInit & { persistentDeviceId?: any } = {}) {
+    constructor(type: string, params: PointerEventInit & { persistentDeviceId?: unknown } = {}) {
       super(type, params);
       this.pointerId = params.pointerId;
-      this.persistentDeviceId = (params as any).persistentDeviceId;
+      this.persistentDeviceId = (params as { persistentDeviceId?: unknown }).persistentDeviceId;
       this.width = params.width;
       this.height = params.height;
       this.pressure = params.pressure;
@@ -35,5 +34,5 @@ if (!global.PointerEvent) {
       this.isPrimary = params.isPrimary;
     }
   }
-  global.PointerEvent = PointerEvent as any;
+  global.PointerEvent = PointerEvent as unknown as typeof globalThis.PointerEvent;
 }

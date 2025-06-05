@@ -16,7 +16,7 @@ import { throttle } from './throttle';
 
 // PointerEvent with optional persistentDeviceId support
 export interface PersistentPointerEvent extends PointerEvent {
-  readonly persistentDeviceId?: any;
+  readonly persistentDeviceId?: unknown;
 }
 
 export { BasicPoint } from './point';
@@ -85,7 +85,7 @@ export default class SignaturePad extends SignatureEventTarget {
   private _lastVelocity = 0;
   private _lastWidth = 0;
   private _strokeMoveUpdate: (event: SignatureEvent) => void;
-  private _strokeDeviceId: any;
+  private _strokeDeviceId: unknown;
   /* tslint:enable: variable-name */
 
   constructor(
@@ -290,7 +290,7 @@ export default class SignaturePad extends SignatureEventTarget {
     return (event.buttons & 1) === 1;
   }
 
-  private _getEventDeviceId(event: PointerEvent): any {
+  private _getEventDeviceId(event: PointerEvent): unknown {
     const persistentId = (event as PersistentPointerEvent).persistentDeviceId;
     return persistentId ?? event.pointerId;
   }
